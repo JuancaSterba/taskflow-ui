@@ -1,27 +1,43 @@
-# TaskflowUi
+# TaskFlow UI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.20.
+Este es el proyecto frontend oficial para la [TaskFlow API](https://github.com/JuancaSterba/taskflow-api). La aplicación permite a los usuarios gestionar proyectos y tareas de una manera simple e intuitiva.
 
-## Development server
+## 🚀 Tecnologías Utilizadas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Este proyecto está construido con las siguientes tecnologías:
 
-## Code scaffolding
+- **Angular v18:** El framework principal para la estructura de la aplicación.
+- **Tailwind CSS:** Para el diseño y los estilos de la interfaz de usuario.
+- **TypeScript:** Para un código más robusto y mantenible.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## 📋 Prerrequisitos
 
-## Build
+Antes de empezar, asegúrate de tener instalado lo siguiente:
+- [Node.js](https://nodejs.org/) (versión LTS recomendada)
+- [Angular CLI](https://angular.io/cli) (v18 o superior)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## ⚙️ Guía de Instalación y Puesta en Marcha
 
-## Running unit tests
+Sigue estos pasos para tener una copia del proyecto corriendo en tu máquina local.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [https://github.com/TU_USUARIO/taskflow-ui.git](https://github.com/TU_USUARIO/taskflow-ui.git)
+    cd taskflow-ui
+    ```
 
-## Running end-to-end tests
+2.  **Instalar dependencias:**
+    ```bash
+    npm install
+    ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+3.  **Ejecutar el backend:**
+    **Importante:** Esta aplicación es un cliente. Para que funcione correctamente, la [TaskFlow API](https://github.com/JuancaSterba/taskflow-api) debe estar ejecutándose al mismo tiempo.
 
-## Further help
+4.  **Iniciar el servidor de desarrollo de Angular:**
+    ```bash
+    ng serve -o
+    ```
+    El comando anterior levantará la aplicación en `http://localhost:4200/` y la abrirá automáticamente en tu navegador.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
