@@ -1,0 +1,20 @@
+<div class="container mx-auto p-8">
+  <div *ngIf="project$ | async as project; else loading">
+    
+    <h1 class="text-4xl font-bold text-gray-900">{{ project.name }}</h1>
+    <p class="mt-4 text-lg text-gray-600">{{ project.description }}</p>
+
+    <hr class="my-8">
+
+    <h2 class="text-2xl font-semibold text-gray-800">Tareas</h2>
+    
+    <div class="mt-4 text-gray-500">
+      <p>Próximamente: Lista de tareas aquí.</p>
+    </div>
+
+  </div>
+
+  <ng-template #loading>
+    <p class="text-center text-gray-500">Cargando detalles del proyecto...</p>
+  </ng-template>
+</div>

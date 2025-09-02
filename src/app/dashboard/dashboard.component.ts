@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { Router } from '@angular/router'; // 1. Importa el Router
+import { Router, RouterLink } from '@angular/router'; // 1. Importa el Router
 
 import { Project } from '../core/models/project.model';
 import { ProjectService } from '../core/services/project.service';
@@ -10,7 +10,7 @@ import { AuthService } from '../core/services/auth.service'; // 2. Importa el Au
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

@@ -16,6 +16,11 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Obtiene la lista paginada de proyectos desde la API.
+   * La petición es interceptada para añadir el token de autenticación.
+   * @returns Un Observable que emite un array de Proyectos (el contenido de la página).
+   */
   getAllProjects(): Observable<Project[]> {
     // 3. Le decimos a http.get que esperamos un Page<Project>
     return this.http.get<Page<Project>>(this.apiUrl)
@@ -24,4 +29,15 @@ export class ProjectService {
         map(response => response.content)
       );
   }
+
+  /**
+   * Obtiene un único proyecto por su ID.
+   * @param id El ID del proyecto a obtener
+   * @returns Un Observable con los datos del proyecto
+   */
+  getProjectById(id: number): Observable<Project>{
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<Project>(url);
+  }
+
 }

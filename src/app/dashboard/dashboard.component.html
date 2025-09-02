@@ -1,27 +1,26 @@
 <div class="container mx-auto p-8 relative">
-  
-  <button 
-    (click)="logout()"
-    class="absolute top-8 right-8 px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-  >
+
+  <button (click)="logout()"
+    class="absolute top-8 right-8 px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
     Cerrar Sesión
   </button>
 
   <h1 class="text-3xl font-bold mb-6">Mis Proyectos</h1>
 
   <div *ngIf="projects$ | async as projects; else loadingOrError">
-    
+
     <div *ngIf="projects.length === 0; else projectList" class="text-center text-gray-500">
       <p>Aún no tienes proyectos. ¡Crea uno para empezar!</p>
     </div>
 
     <ng-template #projectList>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        <div *ngFor="let project of projects" class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold mb-2">{{ project.name }}</h2>
+
+        <a *ngFor="let project of projects" [routerLink]="['/projects', project.id]"
+          class="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <h2 class="text-xl font-semibold mb-2 text-indigo-600">{{ project.name }}</h2>
           <p class="text-gray-600">{{ project.description }}</p>
-        </div>
+        </a>
 
       </div>
     </ng-template>
