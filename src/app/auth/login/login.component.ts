@@ -15,7 +15,6 @@ import { LoginRequest } from '../../core/models/auth.model';
 })
 export class LoginComponent {
 
-  // Modelo para almacenar los datos del formulario
   loginData: LoginRequest = {
     username: '',
     password: ''
@@ -30,13 +29,10 @@ export class LoginComponent {
   onSubmit(): void {
     this.authService.login(this.loginData).subscribe({
       next: (response) => {
-        // En un futuro, aquí guardaremos el token
-        console.log('Login exitoso!', response);
-        // Y redirigiremos al usuario al dashboard
-        // this.router.navigate(['/dashboard']);
+        console.log('Login exitoso! Token guardado.');
+        this.router.navigate(['/dashboard']); 
       },
       error: (err) => {
-        // Aquí manejaremos los errores de login
         console.error('Error en el login:', err);
       }
     });
