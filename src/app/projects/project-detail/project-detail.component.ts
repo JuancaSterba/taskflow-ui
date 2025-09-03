@@ -107,4 +107,23 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Elimina una tarea después de pedir confirmación.
+   * @param task La tarea que se va a eliminar.
+   */
+  onDeleteTask(task: import('../../core/models/task.model').Task): void {
+    const confirmation = window.confirm(`¿Estás seguro de que quieres eliminar la tarea "${task.title}"?`);
+
+    if (confirmation) {
+      this.taskService.deleteTask(task.id).subscribe({
+        next: () => {
+          console.log('Tarea eliminada exitosamente.');
+          // Recargamos los datos del proyecto para refrescar la lista
+          this.project$ = this.projectService.getProjectById(this.projectId);
+        },
+        error: (err) => console.error('Error al eliminar la tarea', err)
+      });
+    }
+  }
+
 }

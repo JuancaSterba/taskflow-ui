@@ -37,5 +37,15 @@ export class TaskService {
     const url = `${this.taskApiUrl}/${taskId}`;
     return this.http.put<Task>(url, taskData);
   }
-  
+
+  /**
+   * Elimina una tarea por su ID.
+   * @param taskId El ID de la tarea a eliminar.
+   * @returns Un Observable<void> que se completa al finalizar la operación.
+   */
+  deleteTask(taskId: number): Observable<void> {
+    const url = `${this.taskApiUrl}/${taskId}`;
+    return this.http.delete<void>(url);
+  }
+
 }
