@@ -60,4 +60,14 @@ export class ProjectService {
     return this.http.put<Project>(url, projectData);
   }
 
+  /**
+   * Elimina un proyecto por su ID.
+   * @param id El ID del proyecto a eliminar.
+   * @returns Un Observable<void> que se completa al finalizar la operación.
+   */
+  deleteProject(id: number): Observable<void> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
+
 }
