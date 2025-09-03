@@ -2,14 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Observable, switchMap } from 'rxjs';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 import { Project } from '../../core/models/project.model';
 import { ProjectService } from '../../core/services/project.service';
+import { TaskService } from '../../core/services/task.service';
+import { CreateTaskRequest } from '../../core/models/task.model';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule],
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.scss']
 })
@@ -18,11 +21,21 @@ export class ProjectDetailComponent implements OnInit {
   project$!: Observable<Project>;
   private projectId!: number;
 
+  isCreatingTask = false;
+  taskForm: FormGroup;
+
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private fb: FormBuilder,
+    private taskService: TaskService
+  ) {
+    this.taskForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['']
+    })
+  }
 
   ngOnInit(): void {
     this.project$ = this.route.paramMap.pipe(
@@ -53,5 +66,45 @@ export class ProjectDetailComponent implements OnInit {
       });
     }
   }
-  
+
+  onTaskSubmit(): void {
+    if (this.taskForm.invalid) {
+      return;
+    }
+    const taskData: CreateTaskRequest = this.taskForm.value;
+    this.taskService.createTaskForProject(this.projectId, taskData).subscribe({
+      next: (newTask) => {
+        console.log('Tarea creada!', newTask);
+        // Recargar los datos del proyecto para mostrar la nueva tarea
+        this.project$ = this.projectService.getProjectById(this.projectId);
+        this.isCreatingTask = false; // Ocultar el formulario
+        this.taskForm.reset(); // Limpiar el formulario
+      },
+      error: (err) => console.error('Error al crear la tarea', err)
+    });
+  }
+
+  /**
+   * Cambia el estado de completado de una tarea.
+   * @param task La tarea que se va a modificar.
+   */
+  onToggleTaskStatus(task: import('../../core/models/task.model').Task): void {
+    // Creamos el objeto con los datos actualizados
+    const updatedTask: import('../../core/models/task.model').CreateTaskRequest = {
+      title: task.title,
+      description: task.description,
+      completed: !task.completed // Invertimos el estado actual
+    };
+
+    // Llamamos al servicio para actualizar la tarea
+    this.taskService.updateTask(task.id, updatedTask).subscribe({
+      next: () => {
+        console.log('Estado de la tarea actualizado.');
+        // Recargamos los datos del proyecto para refrescar la lista de tareas
+        this.project$ = this.projectService.getProjectById(this.projectId);
+      },
+      error: (err) => console.error('Error al actualizar la tarea', err)
+    });
+  }
+
 }

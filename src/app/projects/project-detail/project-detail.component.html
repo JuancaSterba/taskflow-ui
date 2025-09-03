@@ -1,9 +1,9 @@
 <div class="container mx-auto p-8">
+
   <div *ngIf="project$ | async as project; else loading">
 
     <div class="flex justify-between items-center">
       <h1 class="text-4xl font-bold text-gray-900">{{ project.name }}</h1>
-
       <div class="flex items-center gap-4">
         <a [routerLink]="['/projects', project.id, 'edit']"
           class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -17,10 +17,64 @@
     </div>
 
     <p class="mt-4 text-lg text-gray-600">{{ project.description }}</p>
+    <hr class="my-8">
 
-  </div>
+    <div class="flex justify-between items-center">
+      <h2 class="text-2xl font-semibold text-gray-800">Tareas</h2>
+      <button (click)="isCreatingTask = !isCreatingTask"
+        class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+        {{ isCreatingTask ? 'Cancelar' : 'Añadir Tarea' }}
+      </button>
+    </div>
 
-  <ng-template #loading>
+    <div *ngIf="isCreatingTask" class="mt-4 p-4 bg-gray-100 rounded-lg">
+      <form [formGroup]="taskForm" (ngSubmit)="onTaskSubmit()">
+        <div class="mb-4">
+          <label for="title" class="block text-sm font-medium text-gray-700">Título de la Tarea</label>
+          <input type="text" id="title" formControlName="title"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+        </div>
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
+          <textarea id="description" formControlName="description" rows="2"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></textarea>
+        </div>
+        <button type="submit" [disabled]="taskForm.invalid"
+          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400">
+          Guardar Tarea
+        </button>
+      </form>
+    </div>
+
+    <div *ngIf="project.tasks && project.tasks.length > 0; else noTasks" class="mt-4 space-y-4">
+
+      <div *ngFor="let task of project.tasks" class="p-4 bg-white rounded-lg border flex items-center justify-between">
+
+        <div class="flex items-center">
+          <input type="checkbox" [checked]="task.completed" (change)="onToggleTaskStatus(task)"
+            class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-4">
+          <div>
+            <h3 class="font-semibold" [class.line-through]="task.completed">
+              {{ task.title }}
+            </h3>
+            <p class="text-sm text-gray-600">{{ task.description }}</p>
+          </div>
+        </div>
+        <span [ngClass]="task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
+          class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
+          {{ task.completed ? 'Completada' : 'Pendiente' }}
+        </span>
+      </div>
+    </div>
+
+    <ng-template #noTasks>
+      <div class="mt-4 text-gray-500">
+        <p>Este proyecto aún no tiene tareas.</p>
+      </div>
+    </ng-template>
+
+  </div> <ng-template #loading>
     <p class="text-center text-gray-500">Cargando detalles del proyecto...</p>
   </ng-template>
+
 </div>
