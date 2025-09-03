@@ -1,5 +1,11 @@
 <div class="container mx-auto p-8">
 
+  <div class="mb-6">
+    <a routerLink="/dashboard" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+      &larr; Volver al Dashboard
+    </a>
+  </div>
+
   <div *ngIf="project$ | async as project; else loading">
 
     <div class="flex justify-between items-center">
@@ -62,16 +68,21 @@
           </div>
           <div class="flex items-center gap-4">
             <span [ngClass]="task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
-              class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">{{ task.completed ? 'Completada' : 'Pendiente'
-              }}</span>
-            <button (click)="setEditingTask(task)" class="text-gray-400 hover:text-indigo-600">
+              class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
+              {{ task.completed ? 'Completada' : 'Pendiente' }}
+            </span>
+
+            <button (click)="setEditingTask(task)" [disabled]="task.completed"
+              class="text-gray-400 hover:text-indigo-600 disabled:text-gray-300 disabled:cursor-not-allowed">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z" />
               </svg>
             </button>
-            <button (click)="onDeleteTask(task)" class="text-gray-400 hover:text-red-600">
+
+            <button (click)="onDeleteTask(task)" [disabled]="task.completed"
+              class="text-gray-400 hover:text-red-600 disabled:text-gray-300 disabled:cursor-not-allowed">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
