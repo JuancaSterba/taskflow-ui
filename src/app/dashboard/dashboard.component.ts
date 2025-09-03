@@ -34,4 +34,8 @@ export class DashboardComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+  goToCreateProject(): void {
+    this.router.navigate(['/projects/new']);
+  }
 }

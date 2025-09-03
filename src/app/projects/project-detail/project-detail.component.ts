@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Observable, switchMap } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { ProjectService } from '../../core/services/project.service';
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.scss']
 })

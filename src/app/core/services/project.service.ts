@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators'; // 1. Importa el operador 'map'
+import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { Project } from '../models/project.model';
-import { Page } from '../models/page.model'; // 2. Importa nuestro nuevo modelo Page
+import { Project, CreateProjectRequest } from '../models/project.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +38,26 @@ export class ProjectService {
   getProjectById(id: number): Observable<Project>{
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<Project>(url);
+  }
+
+  /**
+   * Crea un nuevo proyecto.
+   * @param projectData Los datos del proyecto a crear.
+   * @returns Un Observable con los datos del proyecto recién creado.
+   */
+  createProject(projectData: CreateProjectRequest): Observable<Project> {
+    return this.http.post<Project>(this.apiUrl, projectData);
+  }
+
+  /**
+   * Actualiza un proyecto existente.
+   * @param id El ID del proyecto a actualizar.
+   * @param projectData Los nuevos datos del proyecto.
+   * @returns Un Observable con los datos del proyecto actualizado.
+   */
+  updateProject(id: number, projectData: CreateProjectRequest): Observable<Project> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.put<Project>(url, projectData);
   }
 
 }

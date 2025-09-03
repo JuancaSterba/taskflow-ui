@@ -1,0 +1,50 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md">
+    
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-gray-900">
+        {{ isEditMode ? 'Editar Proyecto' : 'Crear Nuevo Proyecto' }}
+      </h1>
+    </div>
+
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div>
+        <label for="name" class="text-sm font-medium text-gray-700">Nombre del Proyecto</label>
+        <input 
+          id="name" 
+          type="text" 
+          formControlName="name"
+          class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm"
+        >
+      </div>
+
+      <div>
+        <label for="description" class="text-sm font-medium text-gray-700">Descripción</label>
+        <textarea 
+          id="description" 
+          formControlName="description"
+          rows="4"
+          class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm"
+        ></textarea>
+      </div>
+
+      <div class="flex gap-4">
+        <button 
+          type="submit" 
+          [disabled]="projectForm.invalid"
+          class="flex-1 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400"
+        >
+          {{ isEditMode ? 'Guardar Cambios' : 'Crear Proyecto' }}
+        </button>
+        <button 
+          type="button" 
+          (click)="router.navigate(['/dashboard'])"
+          class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+    
+  </div>
+</div>
