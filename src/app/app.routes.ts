@@ -7,8 +7,13 @@ import { ProjectDetailComponent } from './projects/project-detail/project-detail
 import { ProjectFormComponent } from './projects/project-form/project-form.component';
 
 export const routes: Routes = [
-    { 
-        path: 'login', 
+    {
+        path: '',
+        redirectTo: '/dashboard',
+        pathMatch: 'full'
+    },
+    {
+        path: 'login',
         component: LoginComponent
     },
     {
