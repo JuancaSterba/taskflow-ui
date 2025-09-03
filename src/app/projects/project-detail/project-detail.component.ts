@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Project } from '../../core/models/project.model';
 import { ProjectService } from '../../core/services/project.service';
 import { TaskService } from '../../core/services/task.service';
-import { CreateTaskRequest } from '../../core/models/task.model';
+import { CreateTaskRequest, Task } from '../../core/models/task.model';
 
 @Component({
   selector: 'app-project-detail',
@@ -24,6 +24,9 @@ export class ProjectDetailComponent implements OnInit {
   isCreatingTask = false;
   taskForm: FormGroup;
 
+  editingTask: Task | null = null;
+  editTaskForm: FormGroup;
+
   constructor(
     private route: ActivatedRoute,
     private projectService: ProjectService,
@@ -34,7 +37,11 @@ export class ProjectDetailComponent implements OnInit {
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
       description: ['']
-    })
+    });
+    this.editTaskForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['']
+    });
   }
 
   ngOnInit(): void {
@@ -124,6 +131,50 @@ export class ProjectDetailComponent implements OnInit {
         error: (err) => console.error('Error al eliminar la tarea', err)
       });
     }
+  }
+
+  /**
+   * Activa el modo de edición para una tarea específica.
+   * @param task La tarea a editar.
+   */
+  setEditingTask(task: Task): void {
+    this.editingTask = task;
+    // Rellena el formulario de edición con los datos de la tarea
+    this.editTaskForm.setValue({
+      title: task.title,
+      description: task.description || ''
+    });
+  }
+
+  /**
+   * Cancela el modo de edición.
+   */
+  cancelEditing(): void {
+    this.editingTask = null;
+  }
+
+  /**
+   * Guarda los cambios de una tarea editada.
+   */
+  onUpdateTask(): void {
+    if (!this.editingTask || this.editTaskForm.invalid) {
+      return;
+    }
+
+    const updatedData: CreateTaskRequest = {
+      ...this.editTaskForm.value,
+      completed: this.editingTask.completed // Mantenemos el estado 'completed' original
+    };
+
+    this.taskService.updateTask(this.editingTask.id, updatedData).subscribe({
+      next: () => {
+        console.log('Tarea actualizada.');
+        this.editingTask = null; // Salimos del modo edición
+        // Refrescamos la lista de tareas
+        this.project$ = this.projectService.getProjectById(this.projectId);
+      },
+      error: (err) => console.error('Error al actualizar la tarea', err)
+    });
   }
 
 }
