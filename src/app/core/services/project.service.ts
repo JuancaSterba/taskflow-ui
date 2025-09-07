@@ -13,6 +13,7 @@ import { Page } from '../models/page.model';
 export class ProjectService {
 
   private apiUrl = `${environment.apiUrl}/api/v1/projects`;
+  private adminApiUrl = `${environment.apiUrl}/api/v1/admin/projects`;
 
   constructor(private http: HttpClient) { }
 
@@ -67,6 +68,16 @@ export class ProjectService {
    */
   archiveProject(id: number): Observable<void> {
     const url = `${this.apiUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
+
+  /**
+   * [ADMIN] Elimina permanentemente un proyecto por su ID.
+   * @param id El ID del proyecto a eliminar.
+   * @returns Un Observable<void> que se completa al finalizar la operación.
+   */
+  hardDeleteProject(id: number): Observable<void> {
+    const url = `${this.adminApiUrl}/${id}/hard-delete`;
     return this.http.delete<void>(url);
   }
 
