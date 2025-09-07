@@ -1,20 +1,39 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   
-  // La misma clave que usamos en el AuthService
-  const TOKEN_KEY = 'auth_token';
-  const token = localStorage.getItem(TOKEN_KEY);
+  // Inyectamos los servicios que necesitaremos
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const notificationService = inject(NotificationService);
 
-  // Si el token existe, clonamos la petición y añadimos la cabecera de autorización
+  const token = authService.getToken();
+
   if (token) {
     const clonedRequest = req.clone({
       headers: req.headers.set('Authorization', `Bearer ${token}`)
     });
+    
     // Pasamos la petición clonada al siguiente manejador
-    return next(clonedRequest);
+    return next(clonedRequest).pipe(
+      // 1. Añadimos el operador catchError
+      catchError(error => {
+        // 2. Verificamos si el error es un 401 (No Autorizado)
+        if (error.status === 401) {
+          notificationService.showWarning('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.', 'Sesión Expirada');
+          authService.logout();
+          router.navigate(['/login']);
+        }
+        // 3. Propagamos el error para que otros puedan manejarlo si es necesario
+        return throwError(() => error);
+      })
+    );
   }
 
-  // Si no hay token, dejamos pasar la petición original sin modificarla
   return next(req);
 };
