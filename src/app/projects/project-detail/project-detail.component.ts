@@ -9,6 +9,7 @@ import { ProjectService } from '../../core/services/project.service';
 import { TaskService } from '../../core/services/task.service';
 import { CreateTaskRequest, Task } from '../../core/models/task.model';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-project-detail',
@@ -35,6 +36,7 @@ export class ProjectDetailComponent implements OnInit {
     private fb: FormBuilder,
     private taskService: TaskService,
     public authService: AuthService,
+    public notificationService: NotificationService,
   ) {
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
@@ -57,21 +59,14 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   onArchive(): void {
-    // 3. Mostramos una ventana de confirmación nativa del navegador
-    const confirmation = window.confirm('¿Estás seguro de que quieres eliminar este proyecto? Esta acción no se puede deshacer.');
-
+    const confirmation = window.confirm('¿Estás seguro de que quieres archivar este proyecto?');
     if (confirmation) {
-      // 4. Si el usuario confirma, llamamos al servicio
       this.projectService.archiveProject(this.projectId).subscribe({
         next: () => {
-          console.log('Proyecto eliminado exitosamente');
-          // 5. Redirigimos al dashboard
+          this.notificationService.showSuccess('Proyecto archivado exitosamente.');
           this.router.navigate(['/dashboard']);
         },
-        error: (err) => {
-          console.error('Error al eliminar el proyecto:', err);
-          // En el futuro, aquí mostraremos una notificación de error
-        }
+        error: (err) => this.notificationService.showError('Error al archivar el proyecto.')
       });
     }
   }
@@ -83,13 +78,12 @@ export class ProjectDetailComponent implements OnInit {
     const taskData: CreateTaskRequest = this.taskForm.value;
     this.taskService.createTaskForProject(this.projectId, taskData).subscribe({
       next: (newTask) => {
-        console.log('Tarea creada!', newTask);
-        // Recargar los datos del proyecto para mostrar la nueva tarea
+        this.notificationService.showSuccess(`Tarea "${newTask.title}" creada.`);
         this.project$ = this.projectService.getProjectById(this.projectId);
         this.isCreatingTask = false; // Ocultar el formulario
         this.taskForm.reset(); // Limpiar el formulario
       },
-      error: (err) => console.error('Error al crear la tarea', err)
+      error: (err) => this.notificationService.showError('Error al crear la tarea.')
     });
   }
 
@@ -98,21 +92,18 @@ export class ProjectDetailComponent implements OnInit {
    * @param task La tarea que se va a modificar.
    */
   onToggleTaskStatus(task: import('../../core/models/task.model').Task): void {
-    // Creamos el objeto con los datos actualizados
     const updatedTask: import('../../core/models/task.model').CreateTaskRequest = {
       title: task.title,
       description: task.description,
       completed: !task.completed // Invertimos el estado actual
     };
 
-    // Llamamos al servicio para actualizar la tarea
     this.taskService.updateTask(task.id, updatedTask).subscribe({
       next: () => {
-        console.log('Estado de la tarea actualizado.');
-        // Recargamos los datos del proyecto para refrescar la lista de tareas
+        this.notificationService.showInfo(`Estado de la tarea "${task.title}" actualizado.`);
         this.project$ = this.projectService.getProjectById(this.projectId);
       },
-      error: (err) => console.error('Error al actualizar la tarea', err)
+      error: (err) => this.notificationService.showError('Error al actualizar la tarea.')
     });
   }
 
@@ -126,11 +117,10 @@ export class ProjectDetailComponent implements OnInit {
     if (confirmation) {
       this.taskService.deleteTask(task.id).subscribe({
         next: () => {
-          console.log('Tarea eliminada exitosamente.');
-          // Recargamos los datos del proyecto para refrescar la lista
+          this.notificationService.showSuccess(`Tarea "${task.title}" eliminada.`);
           this.project$ = this.projectService.getProjectById(this.projectId);
         },
-        error: (err) => console.error('Error al eliminar la tarea', err)
+        error: (err) => this.notificationService.showError('Error al eliminar la tarea.')
       });
     }
   }
@@ -165,17 +155,16 @@ export class ProjectDetailComponent implements OnInit {
 
     const updatedData: CreateTaskRequest = {
       ...this.editTaskForm.value,
-      completed: this.editingTask.completed // Mantenemos el estado 'completed' original
+      completed: this.editingTask.completed
     };
 
     this.taskService.updateTask(this.editingTask.id, updatedData).subscribe({
       next: () => {
-        console.log('Tarea actualizada.');
-        this.editingTask = null; // Salimos del modo edición
-        // Refrescamos la lista de tareas
+        this.notificationService.showSuccess('Tarea actualizada.');
+        this.editingTask = null;
         this.project$ = this.projectService.getProjectById(this.projectId);
       },
-      error: (err) => console.error('Error al actualizar la tarea', err)
+      error: (err) => this.notificationService.showError('Error al actualizar la tarea.')
     });
   }
 
