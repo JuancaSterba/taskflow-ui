@@ -8,6 +8,7 @@ import { Project } from '../../core/models/project.model';
 import { ProjectService } from '../../core/services/project.service';
 import { TaskService } from '../../core/services/task.service';
 import { CreateTaskRequest, Task } from '../../core/models/task.model';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-project-detail',
@@ -32,7 +33,8 @@ export class ProjectDetailComponent implements OnInit {
     private projectService: ProjectService,
     private router: Router,
     private fb: FormBuilder,
-    private taskService: TaskService
+    private taskService: TaskService,
+    public authService: AuthService,
   ) {
     this.taskForm = this.fb.group({
       title: ['', Validators.required],
@@ -54,13 +56,13 @@ export class ProjectDetailComponent implements OnInit {
     );
   }
 
-  onDelete(): void {
+  onArchive(): void {
     // 3. Mostramos una ventana de confirmación nativa del navegador
     const confirmation = window.confirm('¿Estás seguro de que quieres eliminar este proyecto? Esta acción no se puede deshacer.');
 
     if (confirmation) {
       // 4. Si el usuario confirma, llamamos al servicio
-      this.projectService.deleteProject(this.projectId).subscribe({
+      this.projectService.archiveProject(this.projectId).subscribe({
         next: () => {
           console.log('Proyecto eliminado exitosamente');
           // 5. Redirigimos al dashboard
