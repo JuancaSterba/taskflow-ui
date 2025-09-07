@@ -168,4 +168,23 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * [ADMIN] Elimina permanentemente un proyecto.
+   */
+  onHardDelete(): void {
+    const confirm1 = window.confirm('¿Estás SEGURO de que quieres eliminar este proyecto PERMANENTEMENTE? Esta acción es irreversible.');
+    if (confirm1) {
+      const confirm2 = window.confirm('CONFIRMACIÓN FINAL: Todos los datos, incluyendo las tareas asociadas, se borrarán para siempre. ¿Continuar?');
+      if (confirm2) {
+        this.projectService.hardDeleteProject(this.projectId).subscribe({
+          next: () => {
+            this.notificationService.showSuccess('El proyecto ha sido eliminado permanentemente.', 'Eliminación Completa');
+            this.router.navigate(['/dashboard']);
+          },
+          error: (err) => this.notificationService.showError('Error en el borrado permanente.', 'Error de Administrador')
+        });
+      }
+    }
+  }
+
 }

@@ -74,7 +74,7 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
-    return this.userRole === 'ADMIN';
+    return this.userRole === 'ROLE_ADMIN';
   }
 
   isLoggedIn(): boolean {

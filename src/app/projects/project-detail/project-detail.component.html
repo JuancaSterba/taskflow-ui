@@ -10,25 +10,33 @@
 
     <div class="flex justify-between items-center">
       <h1 class="text-4xl font-bold text-gray-900">{{ project.name }}</h1>
-      <div *ngIf="authService.isAdmin() || authService.getUsername() === project.ownerUsername"
-        class="flex items-center gap-4">
+      
+      <div class="flex items-center gap-4">
+
         <a [routerLink]="['/projects', project.id, 'edit']"
-          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 ...">
-          Editar Proyecto
+           class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700">
+          Editar
         </a>
-        <button (click)="onArchive()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 ...">
+
+        <button (click)="onArchive()"
+                class="px-4 py-2 text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 border border-transparent rounded-md shadow-sm">
           Archivar
         </button>
+
+        <button *ngIf="authService.isAdmin()"
+                (click)="onHardDelete()"
+                class="px-4 py-2 text-sm font-medium text-white bg-red-800 border border-transparent rounded-md shadow-sm hover:bg-red-900">
+          Borrado Permanente
+        </button>
+
       </div>
     </div>
-
     <p class="mt-4 text-lg text-gray-600">{{ project.description }}</p>
     <hr class="my-8">
-
+    
     <div class="flex justify-between items-center">
       <h2 class="text-2xl font-semibold text-gray-800">Tareas</h2>
-      <button (click)="isCreatingTask = !isCreatingTask"
-        class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+      <button (click)="isCreatingTask = !isCreatingTask" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
         {{ isCreatingTask ? 'Cancelar' : 'Añadir Tarea' }}
       </button>
     </div>
@@ -37,85 +45,56 @@
       <form [formGroup]="taskForm" (ngSubmit)="onTaskSubmit()">
         <div class="mb-4">
           <label for="title" class="block text-sm font-medium text-gray-700">Título de la Tarea</label>
-          <input type="text" id="title" formControlName="title"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+          <input type="text" id="title" formControlName="title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
         </div>
         <div class="mb-4">
           <label for="description" class="block text-sm font-medium text-gray-700">Descripción</label>
-          <textarea id="description" formControlName="description" rows="2"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></textarea>
+          <textarea id="description" formControlName="description" rows="2" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"></textarea>
         </div>
-        <button type="submit" [disabled]="taskForm.invalid"
-          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400">
+        <button type="submit" [disabled]="taskForm.invalid" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400">
           Guardar Tarea
         </button>
       </form>
     </div>
 
     <div *ngIf="project.tasks && project.tasks.length > 0; else noTasks" class="mt-4 space-y-4">
-
       <div *ngFor="let task of project.tasks">
-
-        <div *ngIf="editingTask?.id !== task.id; else editForm"
-          class="p-4 bg-white rounded-lg border flex items-center justify-between">
+        <div *ngIf="editingTask?.id !== task.id; else editForm" class="p-4 bg-white rounded-lg border flex items-center justify-between">
           <div class="flex items-center">
-            <input type="checkbox" [checked]="task.completed" (change)="onToggleTaskStatus(task)"
-              class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-4">
+            <input type="checkbox" [checked]="task.completed" (change)="onToggleTaskStatus(task)" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-4">
             <div>
               <h3 class="font-semibold" [class.line-through]="task.completed">{{ task.title }}</h3>
               <p class="text-sm text-gray-600">{{ task.description }}</p>
             </div>
           </div>
           <div class="flex items-center gap-4">
-            <span [ngClass]="task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'"
-              class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">
-              {{ task.completed ? 'Completada' : 'Pendiente' }}
-            </span>
-
-            <button (click)="setEditingTask(task)" [disabled]="task.completed"
-              class="text-gray-400 hover:text-indigo-600 disabled:text-gray-300 disabled:cursor-not-allowed">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z" />
-              </svg>
+            <span [ngClass]="task.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'" class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full">{{ task.completed ? 'Completada' : 'Pendiente' }}</span>
+            <button (click)="setEditingTask(task)" [disabled]="task.completed" class="text-gray-400 hover:text-indigo-600 disabled:text-gray-300 disabled:cursor-not-allowed">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z" /></svg>
             </button>
-
-            <button (click)="onDeleteTask(task)" [disabled]="task.completed"
-              class="text-gray-400 hover:text-red-600 disabled:text-gray-300 disabled:cursor-not-allowed">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
+            <button (click)="onDeleteTask(task)" [disabled]="task.completed" class="text-gray-400 hover:text-red-600 disabled:text-gray-300 disabled:cursor-not-allowed">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
             </button>
           </div>
         </div>
-
         <ng-template #editForm>
           <div class="p-4 bg-indigo-50 rounded-lg border">
             <form [formGroup]="editTaskForm" (ngSubmit)="onUpdateTask()">
               <div class="mb-2">
-                <input type="text" formControlName="title"
-                  class="text-lg font-semibold w-full px-2 py-1 border border-gray-300 rounded-md">
+                <input type="text" formControlName="title" class="text-lg font-semibold w-full px-2 py-1 border border-gray-300 rounded-md">
               </div>
               <div class="mb-4">
-                <textarea formControlName="description" rows="2"
-                  class="text-sm w-full px-2 py-1 border border-gray-300 rounded-md"></textarea>
+                <textarea formControlName="description" rows="2" class="text-sm w-full px-2 py-1 border border-gray-300 rounded-md"></textarea>
               </div>
               <div class="flex gap-4">
-                <button type="submit" [disabled]="editTaskForm.invalid"
-                  class="px-3 py-1 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400">Guardar</button>
-                <button type="button" (click)="cancelEditing()"
-                  class="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">Cancelar</button>
+                <button type="submit" [disabled]="editTaskForm.invalid" class="px-3 py-1 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 disabled:bg-gray-400">Guardar</button>
+                <button type="button" (click)="cancelEditing()" class="px-3 py-1 text-sm font-medium text-gray-700 bg-gray-200 rounded-md shadow-sm hover:bg-gray-300">Cancelar</button>
               </div>
             </form>
           </div>
         </ng-template>
-
       </div>
     </div>
-
     <ng-template #noTasks>
       <div class="mt-4 text-gray-500">
         <p>Este proyecto aún no tiene tareas.</p>
@@ -125,5 +104,4 @@
   </div> <ng-template #loading>
     <p class="text-center text-gray-500">Cargando detalles del proyecto...</p>
   </ng-template>
-
 </div>
