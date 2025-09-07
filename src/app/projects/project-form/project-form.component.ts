@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProjectService } from '../../core/services/project.service';
 import { CreateProjectRequest } from '../../core/models/project.model';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-project-form',
@@ -21,7 +22,8 @@ export class ProjectFormComponent implements OnInit {
     private fb: FormBuilder,
     private projectService: ProjectService,
     public router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: NotificationService,
   ) {
     this.projectForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -48,12 +50,20 @@ export class ProjectFormComponent implements OnInit {
     const projectData: CreateProjectRequest = this.projectForm.value;
 
     if (this.isEditMode && this.projectId) {
-      this.projectService.updateProject(this.projectId, projectData).subscribe(() => {
-        this.router.navigate(['/dashboard']);
+      this.projectService.updateProject(this.projectId, projectData).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Proyecto actualizado correctamente.');
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => this.notificationService.showError('Error al actualizar el proyecto.')
       });
     } else {
-      this.projectService.createProject(projectData).subscribe(() => {
-        this.router.navigate(['/dashboard']);
+      this.projectService.createProject(projectData).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Proyecto creado exitosamente.');
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => this.notificationService.showError('Error al crear el proyecto.')
       });
     }
   }
