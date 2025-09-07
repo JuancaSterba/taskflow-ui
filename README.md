@@ -22,7 +22,7 @@ Sigue estos pasos para tener una copia del proyecto corriendo en tu máquina loc
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/TU_USUARIO/taskflow-ui.git](https://github.com/TU_USUARIO/taskflow-ui.git)
+    git clone [https://github.com/JuancaSterba/taskflow-ui.git](https://github.com/JuancaSterba/taskflow-ui.git)
     cd taskflow-ui
     ```
 
