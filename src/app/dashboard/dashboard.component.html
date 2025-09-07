@@ -32,7 +32,12 @@
            [routerLink]="['/projects', project.id]" 
            class="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
-          <h2 class="text-xl font-semibold mb-2 text-indigo-600">{{ project.name }}</h2>
+          <div class="flex justify-between items-baseline">
+            <h2 class="text-xl font-semibold mb-2 text-indigo-600">{{ project.name }}</h2>
+            <span class="text-xs text-gray-500">
+              Dueño: {{ project.ownerUsername }}
+            </span>
+          </div>
           <p class="text-gray-600">{{ project.description }}</p>
 
         </a>

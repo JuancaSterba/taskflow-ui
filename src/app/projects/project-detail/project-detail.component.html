@@ -10,14 +10,14 @@
 
     <div class="flex justify-between items-center">
       <h1 class="text-4xl font-bold text-gray-900">{{ project.name }}</h1>
-      <div class="flex items-center gap-4">
+      <div *ngIf="authService.isAdmin() || authService.getUsername() === project.ownerUsername"
+        class="flex items-center gap-4">
         <a [routerLink]="['/projects', project.id, 'edit']"
-          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 ...">
           Editar Proyecto
         </a>
-        <button (click)="onDelete()"
-          class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-          Eliminar
+        <button (click)="onArchive()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 ...">
+          Archivar
         </button>
       </div>
     </div>

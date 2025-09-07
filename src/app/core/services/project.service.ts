@@ -61,11 +61,11 @@ export class ProjectService {
   }
 
   /**
-   * Elimina un proyecto por su ID.
-   * @param id El ID del proyecto a eliminar.
+   * Archiva un proyecto por su ID (Borrado Lógico).
+   * @param id El ID del proyecto a archivar.
    * @returns Un Observable<void> que se completa al finalizar la operación.
    */
-  deleteProject(id: number): Observable<void> {
+  archiveProject(id: number): Observable<void> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.delete<void>(url);
   }
