@@ -1,34 +1,35 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
-import { Project, CreateProjectRequest } from '../models/project.model';
-import { Page } from '../models/page.model';
+import { Project, CreateProjectRequest, PagedModel } from '../models/project.model'; // Asumiendo que los modelos están en archivos separados
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
 
-  private apiUrl = `${environment.apiUrl}/api/v1/projects`;
-  private adminApiUrl = `${environment.apiUrl}/api/v1/admin/projects`;
+  private apiUrl = `${environment.apiUrl}/projects`;
+  private adminApiUrl = `${environment.apiUrl}/admin/projects`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   /**
    * Obtiene la lista paginada de proyectos desde la API.
    * La petición es interceptada para añadir el token de autenticación.
-   * @returns Un Observable que emite un array de Proyectos (el contenido de la página).
+   * Si el usuario es ADMIN, obtiene todos los proyectos del sistema.
+   * @returns Un Observable que emite un objeto PagedModel<Project>.
    */
-  getAllProjects(): Observable<Project[]> {
-    // 3. Le decimos a http.get que esperamos un Page<Project>
-    return this.http.get<Page<Project>>(this.apiUrl)
-      .pipe(
-        // 4. Usamos 'map' para transformar la respuesta y devolver solo el array 'content'
-        map(response => response.content)
-      );
+  getAllProjects(page: number = 0, size: number = 10): Observable<PagedModel<Project>> {
+    const url = this.authService.isAdmin() ? this.adminApiUrl : this.apiUrl;
+
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<PagedModel<Project>>(url, { params });
   }
 
   /**

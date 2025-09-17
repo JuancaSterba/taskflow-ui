@@ -1,20 +1,37 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Task, CreateTaskRequest } from '../models/task.model';
+import { PagedModel } from '../models/project.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
 
-  // La URL base para los proyectos, ya que las tareas se crean a través de ellos
-  private projectApiUrl = `${environment.apiUrl}/api/v1/projects`;
-  private taskApiUrl = `${environment.apiUrl}/api/v1/tasks`;
+  private projectApiUrl = `${environment.apiUrl}/projects`;
+  private taskApiUrl = `${environment.apiUrl}/tasks`;
+  private adminApiUrl = `${environment.apiUrl}/admin/tasks`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
+
+  /**
+   * [ADMIN] Obtiene la lista paginada de TODAS las tareas del sistema.
+   * @returns Un Observable que emite un objeto PagedModel<Task>.
+   */
+  getAllTasksForAdmin(page: number = 0, size: number = 10): Observable<PagedModel<Task>> {
+    if (!this.authService.isAdmin()) {
+      // Opcional: podrías devolver un error o un observable vacío si un no-admin intenta llamar a esto.
+      return new Observable(observer => observer.error('User is not an admin'));
+    }
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<PagedModel<Task>>(this.adminApiUrl, { params });
+  }
 
   /**
    * Crea una nueva tarea para un proyecto específico.
@@ -39,13 +56,22 @@ export class TaskService {
   }
 
   /**
-   * Elimina una tarea por su ID.
+   * Archiva una tarea por su ID (Borrado Lógico).
    * @param taskId El ID de la tarea a eliminar.
    * @returns Un Observable<void> que se completa al finalizar la operación.
    */
-  deleteTask(taskId: number): Observable<void> {
+  archiveTask(taskId: number): Observable<void> {
     const url = `${this.taskApiUrl}/${taskId}`;
     return this.http.delete<void>(url);
   }
 
+  /**
+   * [ADMIN] Elimina permanentemente una tarea por su ID.
+   * @param taskId El ID de la tarea a eliminar.
+   * @returns Un Observable<void> que se completa al finalizar la operación.
+   */
+  hardDeleteTask(taskId: number): Observable<void> {
+    const url = `${this.adminApiUrl}/${taskId}/hard-delete`;
+    return this.http.delete<void>(url);
+  }
 }

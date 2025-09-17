@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Router, RouterLink } from '@angular/router'; // 1. Importa el Router
+import { map } from 'rxjs/operators';
 
 import { Project } from '../core/models/project.model';
 import { ProjectService } from '../core/services/project.service';
@@ -26,7 +27,9 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.projects$ = this.projectService.getAllProjects();
+    this.projects$ = this.projectService.getAllProjects().pipe(
+      map(pagedModel => pagedModel.content)
+    );
   }
 
   // 4. Añade el método logout
@@ -37,5 +40,13 @@ export class DashboardComponent implements OnInit {
 
   goToCreateProject(): void {
     this.router.navigate(['/projects/new']);
+  }
+
+  // Método para aplicar clases condicionales a los proyectos
+  getProjectClasses(project: Project): any {
+    if (project.status === 'ARCHIVED') {
+      return { 'text-orange-600': true };
+    }
+    return {};
   }
 }

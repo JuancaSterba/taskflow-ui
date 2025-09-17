@@ -19,7 +19,7 @@
       </button>
     </div>
   </div>
-  <div *ngIf="projects$ | async as projects; else loadingOrError">
+  <ng-container *ngIf="projects$ | async as projects; else loadingOrError">
     
     <div *ngIf="projects.length === 0; else projectList" class="text-center text-gray-500">
       <p>Aún no tienes proyectos. ¡Crea uno para empezar!</p>
@@ -28,23 +28,26 @@
     <ng-template #projectList>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <a *ngFor="let project of projects" 
-           [routerLink]="['/projects', project.id]" 
+        <a *ngFor="let project of projects"
+           [routerLink]="['/projects', project.id]"
            class="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
           <div class="flex justify-between items-baseline">
-            <h2 class="text-xl font-semibold mb-2 text-indigo-600">{{ project.name }}</h2>
+            <div class="flex items-center gap-2">
+              <h2 class="text-xl font-semibold mb-2 text-indigo-600" [ngClass]="getProjectClasses(project)">{{ project.name }}</h2>
+              <span *ngIf="project.status === 'ARCHIVED'" class="bg-orange-100 text-orange-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Archivado</span>
+            </div>
             <span class="text-xs text-gray-500">
               Dueño: {{ project.ownerUsername }}
             </span>
           </div>
-          <p class="text-gray-600">{{ project.description }}</p>
+          <p class="text-gray-600" [ngClass]="getProjectClasses(project)">{{ project.description }}</p>
 
         </a>
       </div>
     </ng-template>
 
-  </div>
+  </ng-container>
 
   <ng-template #loadingOrError>
     <p class="text-center text-gray-500">Cargando proyectos...</p>

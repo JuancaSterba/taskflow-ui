@@ -11,7 +11,7 @@ import { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '
 })
 export class AuthService {
 
-  private apiUrl = `${environment.apiUrl}/api/v1/auth`;
+  private apiUrl = `${environment.apiUrl}/auth`;
   private readonly TOKEN_KEY = 'auth_token';
   private userRole: string | null = null;
   private username: string | null = null;

@@ -108,19 +108,37 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   /**
-   * Elimina una tarea después de pedir confirmación.
-   * @param task La tarea que se va a eliminar.
+   * Archiva una tarea después de pedir confirmación.
+   * @param task La tarea que se va a archivar.
    */
-  onDeleteTask(task: import('../../core/models/task.model').Task): void {
-    const confirmation = window.confirm(`¿Estás seguro de que quieres eliminar la tarea "${task.title}"?`);
+  onArchiveTask(task: import('../../core/models/task.model').Task): void {
+    const confirmation = window.confirm(`¿Estás seguro de que quieres archivar la tarea "${task.title}"?`);
 
     if (confirmation) {
-      this.taskService.deleteTask(task.id).subscribe({
+      this.taskService.archiveTask(task.id).subscribe({
         next: () => {
-          this.notificationService.showSuccess(`Tarea "${task.title}" eliminada.`);
+          this.notificationService.showSuccess(`Tarea "${task.title}" archivada.`);
           this.project$ = this.projectService.getProjectById(this.projectId);
         },
-        error: (err) => this.notificationService.showError('Error al eliminar la tarea.')
+        error: (err: any) => this.notificationService.showError('Error al archivar la tarea.')
+      });
+    }
+  }
+
+  /**
+   * [ADMIN] Elimina permanentemente una tarea.
+   * @param task La tarea que se va a eliminar.
+   */
+  onHardDeleteTask(task: Task): void {
+    const confirm1 = window.confirm(`[ADMIN] ¿Estás SEGURO de que quieres eliminar esta tarea PERMANENTEMENTE? Esta acción es irreversible.`);
+    if (confirm1) {
+      this.taskService.hardDeleteTask(task.id).subscribe({
+        next: () => {
+          this.notificationService.showSuccess(`Tarea "${task.title}" eliminada permanentemente.`, 'Eliminación Completa');
+          // Recargar los datos del proyecto para reflejar el cambio
+          this.project$ = this.projectService.getProjectById(this.projectId);
+        },
+        error: (err) => this.notificationService.showError('Error en el borrado permanente de la tarea.', 'Error de Administrador')
       });
     }
   }
@@ -185,6 +203,16 @@ export class ProjectDetailComponent implements OnInit {
         });
       }
     }
+  }
+
+  // Método para aplicar clases condicionales a las tareas
+  getTaskClasses(task: Task): any {
+    // La tarea archivada tiene la máxima prioridad de estilo.
+    if (task.status === 'ARCHIVED') {
+      return { 'text-orange-600': true };
+    }
+    // Si no está archivada, solo se tacha si está completada.
+    return { 'line-through': task.completed };
   }
 
 }

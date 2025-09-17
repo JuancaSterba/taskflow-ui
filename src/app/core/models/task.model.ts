@@ -4,6 +4,7 @@ export interface Task {
   title: string;
   description: string;
   completed: boolean;
+  status: 'ACTIVE' | 'ARCHIVED';
 }
 
 // Representa los datos necesarios para crear o actualizar una tarea.
